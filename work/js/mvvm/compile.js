@@ -1,10 +1,14 @@
 function Compile(el, vm) {
+    // 保存vm
     this.$vm = vm;
+    // 保存el元素对象
     this.$el = this.isElementNode(el) ? el : document.querySelector(el);
-
     if (this.$el) {
+        // 1. 取出el中所有的子节点存放到一个fragment对象, 并保存fragment
         this.$fragment = this.node2Fragment(this.$el);
+        // 2. 编译fragment中所有的子节点
         this.init();
+        // 3. 将编译好的fragment插入el元素
         this.$el.appendChild(this.$fragment);
     }
 }
@@ -26,22 +30,31 @@ Compile.prototype = {
         this.compileElement(this.$fragment);
     },
 
+    // 编译指定节点的所有层次的子节点
     compileElement: function(el) {
+        // 得到所有子节点
         var childNodes = el.childNodes,
+          // 保存complie实例对象
             me = this;
-
+        // 遍历所有子节点
         [].slice.call(childNodes).forEach(function(node) {
+            // 得到节点的文本内容
             var text = node.textContent;
+            // 用来匹配{{}}表达式的正则对象
             var reg = /\{\{(.*)\}\}/;
-
+            // 如果是元素节点
             if (me.isElementNode(node)) {
+                // 编译节点中所有指令属性
                 me.compile(node);
-
+            // 如果是一个表达式格式的文本节点
             } else if (me.isTextNode(node) && reg.test(text)) {
+                // 编译文本节点: 解析表达式
                 me.compileText(node, RegExp.$1);
             }
 
+            // 如果还有子节点
             if (node.childNodes && node.childNodes.length) {
+                // 递归调用编译子节点的所有子节点
                 me.compileElement(node);
             }
         });
@@ -69,7 +82,9 @@ Compile.prototype = {
         });
     },
 
+
     compileText: function(node, exp) {
+
         compileUtil.text(node, this.$vm, exp);
     },
 
@@ -90,16 +105,19 @@ Compile.prototype = {
     }
 };
 
-// 指令处理集合
+// 包含多个解析不同指令/表达式方法的对象
 var compileUtil = {
+    // 解析{{}}/v-text
     text: function(node, vm, exp) {
         this.bind(node, vm, exp, 'text');
     },
 
+    // 解析v-html
     html: function(node, vm, exp) {
         this.bind(node, vm, exp, 'html');
     },
 
+    // 解析v-model
     model: function(node, vm, exp) {
         this.bind(node, vm, exp, 'model');
 
@@ -116,14 +134,23 @@ var compileUtil = {
         });
     },
 
+    // 解析v-class
     class: function(node, vm, exp) {
         this.bind(node, vm, exp, 'class');
     },
 
+    /**
+     * 实现指令的初始化绑定
+     * @param node: 节点
+     * @param vm: vm
+     * @param exp: 表达式字符串  name/wife.name
+     * @param dir: 指令名  text/html/class/model
+     */
     bind: function(node, vm, exp, dir) {
+        // 得到更新节点的函数
         var updaterFn = updater[dir + 'Updater'];
-
-        updaterFn && updaterFn(node, this._getVMVal(vm, exp));
+        // 调用函数更新节点
+        updaterFn && updaterFn(node, this._getVMVal(vm, exp)); //
 
         new Watcher(vm, exp, function(value, oldValue) {
             updaterFn && updaterFn(node, value, oldValue);
@@ -140,7 +167,12 @@ var compileUtil = {
         }
     },
 
-    _getVMVal: function(vm, exp) {
+    /**
+     * 得到表达式所对应的值
+     * @param vm
+     * @param exp
+     */
+    _getVMVal: function(vm, exp) {// name / wife.name
         var val = vm._data;
         exp = exp.split('.');
         exp.forEach(function(k) {
