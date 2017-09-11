@@ -9,18 +9,29 @@ function Compile(el, vm) {
         // 2. 编译fragment中所有的子节点
         this.init();
         // 3. 将编译好的fragment插入el元素
-        this.$el.appendChild(this.$fragment);
+        // this.$el.innerHTML = ''
+        this.$el.appendChild(this.$fragment); // 第二次更新界面
     }
 }
 
 Compile.prototype = {
     node2Fragment: function(el) {
+
+        // 得到el的所有子节点的字符串
+        const innerStr = el.innerHTML
+        // 一次性清空el的所有子节点
+        el.innerHTML = ''  // 第一次更新
+
+        // 将标签结构字符串转换为标签对象
+        const div = document.createElement('div')
+        div.innerHTML = innerStr
+
+        // 将div中所有的子节点添加到fragment中
         var fragment = document.createDocumentFragment(),
             child;
-
         // 将原生节点拷贝到fragment
-        while (child = el.firstChild) {
-            fragment.appendChild(child);
+        while (child = div.firstChild) {
+            fragment.appendChild(child); // 此处不会更新界面
         }
 
         return fragment;
