@@ -6,8 +6,8 @@
 		enumerable: true/false 是否可以枚举(for..in / keys())
 		value: 指定初始值
 		writable: true/false value是否可以修改存取(访问)描述符
-		get: 函数, 用来得到当前属性值
-		set: 函数, 用来监视当前属性值的变化
+		get: 回调函数, 用来得到当前属性值, 当读取属性值就会自动调用
+		set: 回调函数, 用来监视当前属性值的变化, 当属性值发生了改变时自动调用
   	4.Object.keys(obj): 得到对象自身可枚举的属性名的数组
   	5.DocumentFragment: 文档碎片(高效批量更新多个节点)
   	6.obj.hasOwnProperty(prop): 判断prop是否是obj自身的属性
@@ -19,7 +19,7 @@
   	4.基本实现流程
     	1). 通过Object.defineProperty()给vm添加与data对象的属性对应的属性描述符
     	2). 所有添加的属性都包含getter/setter
-    	3). 在getter/setter内部去操作data中对应的属性数据
+    	3). 在getter/setter内部去操作(读/写)data中对应的属性数据
     
 ## 3. 模板解析(compile.js)
   	1.模板解析的关键对象: compile对象
@@ -33,7 +33,7 @@
       	3). 将解析后的fragment添加到el中显示
     3.解析表达式文本节点
       	1). 根据正则对象得到匹配出的表达式字符串: 子匹配/RegExp.$1
-      	2). 从data中取出表达式对应的属性值
+      	2). 通过vm从data中取出表达式对应的属性值
       	3). 将属性值设置为文本节点的textContent
     4.事件指令解析
       	1). 从指令名中取出事件名
