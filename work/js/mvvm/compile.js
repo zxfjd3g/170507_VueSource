@@ -138,16 +138,22 @@ var compileUtil = {
 
     // 解析v-model
     model: function(node, vm, exp) {
+        // 实现model-->view的绑定
+            // 初始化显示
+            // 创建watcher监视表达式
         this.bind(node, vm, exp, 'model');
 
         var me = this,
+          // 得到当前表达式的值
             val = this._getVMVal(vm, exp);
+        // 给节点绑定input监听: 当输入框的值发生改变时自动调用回调
         node.addEventListener('input', function(e) {
+            // 得到输入框最新的值
             var newValue = e.target.value;
             if (val === newValue) {
                 return;
             }
-
+            // 将最新值保存到表达式所对应的属性中
             me._setVMVal(vm, exp, newValue);
             val = newValue;
         });
@@ -171,8 +177,9 @@ var compileUtil = {
         // 调用函数更新节点
         updaterFn && updaterFn(node, this._getVMVal(vm, exp)); //
 
-        // 为表达式创建对应的watcher对象
+        // 为表达式创建对应的watcher对象, 当表达式需要更新时, 自动调用回调函数
         new Watcher(vm, exp, function(value, oldValue) {
+            // 更新对应的节点
             updaterFn && updaterFn(node, value, oldValue);
         });
     },
@@ -213,6 +220,7 @@ var compileUtil = {
             if (i < exp.length - 1) {
                 val = val[k];
             } else {
+                // 更新表达式中最后一个属性的值
                 val[k] = value;
             }
         });

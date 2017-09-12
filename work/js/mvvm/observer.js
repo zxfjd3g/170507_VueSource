@@ -42,7 +42,7 @@ Observer.prototype = {
                 val = newVal;
                 // 新的值是object的话，进行监听
                 childObj = observe(newVal);
-                // 通知订阅者
+                // 通知dep
                 dep.notify();
             }
         });
@@ -64,15 +64,18 @@ var uid = 0;
 
 function Dep() {
     this.id = uid++;
+    // 存放多个watcher的数组
     this.subs = [];
 }
 
 Dep.prototype = {
     addSub: function(sub) {
+        // 保存指定的watcher
         this.subs.push(sub);
     },
 
     depend: function() {
+        // 调用对应的watcher的方法addDep
         Dep.target.addDep(this);
     },
 
@@ -84,7 +87,9 @@ Dep.prototype = {
     },
 
     notify: function() {
+        // 遍历dep中所有的watcher
         this.subs.forEach(function(sub) {
+            // 通知watcher去更新
             sub.update();
         });
     }

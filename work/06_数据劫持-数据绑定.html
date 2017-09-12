@@ -12,6 +12,8 @@
 <body>
 <div id="test">
   <p>{{name}}</p>
+  <p v-text="name"></p>
+  <p>{{wife.name}}</p>
   <button v-on:click="update">更新</button>
 </div>
 <script type="text/javascript" src="js/mvvm/mvvm.js"></script>
@@ -22,11 +24,16 @@
   new MVVM({
     el: '#test',
     data: {
-      name: 'Hehe'
+      name: 'Hehe',
+      wife: {
+        name: 'HAHA',
+        age: 12
+      }
     },
     methods: {
       update () {
         this.name = 'HAHA'
+        this.wife.name = 'BABA'
       }
     }
   })
