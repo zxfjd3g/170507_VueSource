@@ -15,6 +15,7 @@ function MVVM(options) {
         me._proxy(key);
     });
 
+    // 实现对data中所有属性的数据绑定
     observe(data, this);
 
     // 创建一个complie对象: 创建模板
