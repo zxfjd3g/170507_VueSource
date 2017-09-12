@@ -92,6 +92,7 @@ Compile.prototype = {
                     compileUtil.eventHandler(node, me.$vm, exp, dir);
                 // 普通指令
                 } else {
+                    // 解析一般指令
                     compileUtil[dir] && compileUtil[dir](node, me.$vm, exp);
                 }
 
@@ -217,7 +218,9 @@ var compileUtil = {
     }
 };
 
-
+/*
+包含多个更新节点的方法的对象
+ */
 var updater = {
     // 设置节点的文本内容: {{}}/v-text
     textUpdater: function(node, value) {

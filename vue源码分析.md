@@ -41,12 +41,12 @@
       	3). 给当前元素节点绑定指定事件名和回调函数的dom事件监听
       	4). 指令解析完后, 移除此指令属性
     5.一般指令解析
-      	1). 得到指令名和指令值(表达式)
-      	2). 从data中根据表达式得到对应的值
+      	1). 得到指令名和指令值(表达式): text/html/class  msg/myClass
+      	2). 从data中根据表达式得到对应的值: 表达式在data中的值
       	3). 根据指令名确定需要操作元素节点的什么属性
-	        * v-text---textContent属性
-	        * v-html---innerHTML属性
-	        * v-class--class属性
+	        * v-text---textContent属性---textUpdater()
+	        * v-html---innerHTML属性---htmlUpdater()
+	        * v-class--className属性---classUpdater()
       	4). 将得到的表达式的值设置到对应的属性上
       	5). 移除元素的指令属性
 
